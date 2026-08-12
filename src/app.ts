@@ -85,8 +85,12 @@ export class RoommateExpenseSplitter {
       const amountToSettle = Math.min(creditorBalance, Math.abs(debtorBalance));
 
       if (amountToSettle > 0.01) { // Only create settlement if amount is significant
+        // The transactions for a settlement should represent the underlying expenses
+        // that caused the debt/credit, not just specific paidBy/split combinations.
+        // For simplicity, we'll include all expenses that involve either the debtor or creditor.
         const transactions = this.expenses.filter(exp =>
-          exp.paidBy === creditorId && exp.splits.some(s => s.roommateId === debtorId)
+          exp.paidBy === creditorId || exp.paidBy === debtorId ||
+          exp.splits.some(s => s.roommateId === creditorId) || exp.splits.some(s => s.roommateId === debtorId)
         );
         settlements.push({ debtor: debtorId, creditor: creditorId, amount: amountToSettle, transactions });
       }
