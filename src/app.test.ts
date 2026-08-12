@@ -34,9 +34,16 @@ describe('RoommateExpenseSplitter', () => {
   it('addRoommate: should add a new roommate', () => {
     const roommate = splitter.addRoommate('Alice');
     expect(roommate.name).toBe('Alice');
-    expect(roommate.id).toMatch(/^rm-\d+$/);
+    expect(roommate.id).toMatch(/^rm-/);
     expect(splitter.getRoommates()).toHaveLength(1);
     expect(splitter.getRoommates()[0]).toEqual(roommate);
+  });
+
+  it('addRoommate: should assign unique ids even when created in the same millisecond', () => {
+    const alice = splitter.addRoommate('Alice');
+    const bob = splitter.addRoommate('Bob');
+    const charlie = splitter.addRoommate('Charlie');
+    expect(new Set([alice.id, bob.id, charlie.id]).size).toBe(3);
   });
 
   it('addRoommate: should not add a roommate with an empty name', () => {
